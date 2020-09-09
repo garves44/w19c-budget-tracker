@@ -5,7 +5,9 @@ const compression = require("compression");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 3001;
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/budget";
+const MONGODB_URI =
+  `mongodb+srv://budget-tracker:${process.env.MPASS}@cluster0.bhbmx.mongodb.net/${process.env.MDB}?retryWrites=true&w=majority` ||
+  "mongodb://localhost/budget";
 
 const app = express();
 
