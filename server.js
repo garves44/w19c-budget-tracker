@@ -5,6 +5,7 @@ const compression = require("compression");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 3001;
+//mpass = mongo password MDB = mongo data Base
 const MONGODB_URI =
   `mongodb+srv://budget-tracker:${process.env.MPASS}@cluster0.bhbmx.mongodb.net/${process.env.MDB}?retryWrites=true&w=majority` ||
   "mongodb://localhost/budget";
