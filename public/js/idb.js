@@ -30,3 +30,38 @@ var saveTransaction = function (record) {
 
   transactionObjectStore.add(record);
 };
+
+var uploadTransaction = function () {
+  const transaction = db.transaction(["new_transaction"], "readwrite"); //new transaction in database allowed to READ/WRITE
+
+  const transactionObjectStore = transaction.objectStore("new_transaction"); //access objectStore
+
+  const allTransactions = transactionObjectStore.getAll(); //get all records into one variable
+
+  allTransactions.onsuccess = function () {
+    //if successful check length and send to api server
+    if (allTransactions.result.length > 0) {
+      fetch("/api/transaction", {
+        method: "POST",
+        body: JSON.stringify(allTransactions.result),
+        headers: {
+          Accept: "Application/json, text/plain, */*",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((serverResponse) => {
+          if (serverResponse.message) {
+            throw new Error(serverResponse);
+          }
+          const transaction = db.transaction(["new_transaction"], "readwrite"); //new transaction in database allowed to READ/WRITE
+          const transactionObjectStore = transaction.objectStore(
+            "new_transaction"
+          ); //access objectStore
+
+          transactionObjectStore.clear();
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+};
