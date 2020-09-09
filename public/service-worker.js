@@ -20,11 +20,49 @@ const FILES_TO_CACHE = [
   "./css/styles.css",
 ];
 
+//installing eventListener
 self.addEventListener("install", function (event) {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log(`${CACHE_NAME} is installing cache`);
       return cache.addAll(FILES_TO_CACHE);
+    })
+  );
+});
+
+// Active eventListener
+self.addEventListener("activate", function (event) {
+  event.waitUntil(
+    caches.keys().then(function (keyList) {
+      let keep = keyList.filter(function (key) {
+        return key.indexOf(APP_PREFIX);
+      });
+      keep.push(CACHE_NAME);
+      return Promise.all(
+        keyList.map(function (key, index) {
+          if (keep.indexOf(key) === -1) {
+            console.log(`${keyList[i]} is being removed`);
+            return caches.delete(keyList[i]);
+          }
+        })
+      );
+    })
+  );
+});
+
+//fetching eventListener
+self.addEventListener("fetch", function (event) {
+  console.log(`${event.request.url} is being requested`);
+  event.respondWith(
+    caches.match(event.request).then(function (request) {
+      //if no request fetch else return request
+      if (!request) {
+        console.log(`${event.request.url} is not being caches, re-fetching...`);
+        return fetch(event.request);
+      } else {
+        console.log(`${event.request.url} is the response cache`);
+        return request;
+      }
     })
   );
 });
