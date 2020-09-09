@@ -17,3 +17,16 @@ request.onsuccess = function (event) {
     uploadTransaction();
   }
 };
+
+request.onerror = function (event) {
+  console.log(event.target.errCode); //if error console.log
+};
+
+//function for submitting new transaction while offline
+var saveTransaction = function (record) {
+  const transaction = db.transaction(["new_transaction"], "readwrite"); //new transaction in database allowed to READ/WRITE
+
+  const transactionObjectStore = transaction.objectStore("new_transaction"); //access objectStore
+
+  transactionObjectStore.add(record);
+};
